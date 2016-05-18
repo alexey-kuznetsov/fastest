@@ -1,0 +1,20 @@
+/* line 10, /home/alex/sites/fastest/sites/all/themes/fastest/sass/style-guide/kss-only.scss */
+[id^='kssref-layouts-'] [class^='layout-'][class*='__'] {
+  outline: 1px dotted #999999;
+}
+
+/* line 16, /home/alex/sites/fastest/sites/all/themes/fastest/sass/style-guide/kss-only.scss */
+#kssref-layouts-layout-3column .kss-modifier__example {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@media (min-width: 777px) {
+  /* line 16, /home/alex/sites/fastest/sites/all/themes/fastest/sass/style-guide/kss-only.scss */
+  #kssref-layouts-layout-3column .kss-modifier__example {
+    padding-left: 12px;
+    padding-right: 13px;
+  }
+}
+
+/*# sourceMappingURL=kss-only.css.map */

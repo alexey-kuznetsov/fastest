@@ -1,0 +1,31 @@
+/**
+ * Miscellaneuos styles and rules of FTT project
+ */
+.submitted {
+	font-style: italic;
+	font-size: .9em;
+}
+
+/**
+ * Quiz elements
+ */
+.quiz-start-link {
+	@include button(color(red));
+	margin-bottom: 20px;
+}
+
+.question_type_name {
+	color: color('grey-dark');
+	font-style: italic;
+	font-size: .9em;
+}
+
+.multichoice-row {
+	td:first-child {
+		text-align: center;
+	}
+}
+
+.layout-swap__top {
+	background-color: color('navbar');
+}

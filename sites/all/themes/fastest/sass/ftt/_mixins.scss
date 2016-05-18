@@ -1,0 +1,14 @@
+/**
+ * Mixins for FTT project
+ */
+@mixin button($bgcolor) {
+	display: inline-block;
+	padding: 5px 15px;
+	line-height: inherit;
+	text-decoration: none;
+	cursor: pointer;
+	color: color(button);
+	background: $bgcolor;
+	border: 0;
+	border-radius: 3px;
+}

@@ -1,0 +1,4 @@
+name = FTT Quiz Pseudouser
+description = Allows to store user names for anonimous users, that takes Quiz without registration
+core = 7.x
+package = "FTT"

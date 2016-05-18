@@ -1,0 +1,25 @@
+<?php
+/**
+ * Implements hook_schema()
+ */
+ function ftt_quiz_pseudouser_schema(){
+ 	$schema['ftt_quiz_pseudouser'] = array(
+ 		'description' => 'Table with names and result IDS of unregistered users',
+ 		'fields' => array(
+ 			'rid' => array(
+ 				'description' => 'Result ID',
+ 				'type' => 'int',
+ 				'unsigned' => true,
+ 				'not null' => true,
+ 				),
+ 			'student_name' => array(
+ 				'description' => 'Student name',
+ 				'type' => 'varchar',
+ 				'length' => 128,
+ 				'not null' => true,
+ 				),
+ 			),
+ 		'primary key' => array('rid'),
+ 		);
+ 	return $schema;
+ }

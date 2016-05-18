@@ -1,0 +1,4 @@
+name = FTT Import Users
+description = Import users from .xsl file into group
+core = 7.x
+package = "FTT"

@@ -1,0 +1,85 @@
+# $Id$
+#
+# Russian translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  ftt_import_users.module: n/a
+#  ftt_import_users.info: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2016-05-03 21:29+0300\n"
+"PO-Revision-Date: 2016-05-03 21:29+0300\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Russian <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+
+#: ftt_import_users.module:65
+msgid "This group already contents the next users:<br>"
+msgstr "Группа уже включает следующих пользователей:<br>"
+
+#: ftt_import_users.module:89
+msgid "This form allows to import users into group."
+msgstr "Эта форма позволяет импортировать новых пользователей в группу"
+
+#: ftt_import_users.module:93
+msgid "Users data file"
+msgstr "Файл с данными пользователей"
+
+#: ftt_import_users.module:94
+msgid "File of XLS format."
+msgstr "Файл формата XLS"
+
+#: ftt_import_users.module:103
+msgid "Import"
+msgstr "Импортировать"
+
+#: ftt_import_users.module:115
+msgid "Please select users data file."
+msgstr "Пожалуйста, выберите файл"
+
+#: ftt_import_users.module:119
+msgid "Unsupported file format."
+msgstr "Неподдерживаемый формат файла"
+
+#: ftt_import_users.module:133
+msgid "File is empty."
+msgstr "Файл пустой"
+
+#: ftt_import_users.module:207
+msgid "The following records was ignored: <br>"
+msgstr "Следующие записи были проигнорированы при импорте:<br>"
+
+#: ftt_import_users.module:214
+msgid "SurName"
+msgstr "Фамилия"
+
+#: ftt_import_users.module:215
+msgid "Name"
+msgstr "Имя"
+
+#: ftt_import_users.module:216
+msgid "patronymic"
+msgstr "Отчество"
+
+#: ftt_import_users.module:10
+msgid "Import users"
+msgstr "Импорт пользователей"
+
+#: ftt_import_users.info:0
+msgid "FTT Import Users"
+msgstr "FTT Import Users"
+
+#: ftt_import_users.info:0
+msgid "Import users from .xsl file into group"
+msgstr "Импорт пользователей в группу из .xls файла"
+
+#: ftt_import_users.info:0
+msgid "FTT"
+msgstr "FTT"
+

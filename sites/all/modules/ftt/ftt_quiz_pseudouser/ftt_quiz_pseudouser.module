@@ -1,0 +1,154 @@
+<?php 
+/**
+ * Implements hook_form()
+ */
+function ftt_quiz_pseudouser_form(){
+	$form = array();
+	if(isset($_SESSION['student_name'])){		
+		$form['reset'] = array(
+				'#type' => 'submit',
+				'#value' => t('Reset'),
+				'#prefix' => '<div id="student-name"><div>' . t('Your name is: ') . $_SESSION['student_name'] . '</div>',
+				'#suffix' => '</div>',
+				'#ajax' => array(
+						'callback' => 'ftt_quiz_pseudouser_reset_name',
+						'wrapper' => 'student-name',
+						'method' => 'replace',
+				),
+			);
+	} else {
+	$form['name'] = array(
+			'#type' => 'textfield',
+			'#title' => t('Enter your name'),
+			'#size' => 30,
+			'#maxlength' => 128,
+			'#required' => TRUE,
+			'#prefix' => '<div id="student-name">',
+			
+		);
+	$form['save'] = array(
+			'#type' => 'submit',
+			'#value' => t('Save'),
+			'#suffix' => '</div>',
+			'#ajax' => array(
+					'callback' => 'ftt_quiz_pseudouser_store_name',
+					'wrapper' => 'student-name',
+					'method' => 'replace',
+				),
+		);
+	}
+	return $form;
+}
+
+function ftt_quiz_pseudouser_store_name($form, &$form_state){
+	$_SESSION['student_name'] = $form_state['values']['name'];	
+	$form = drupal_rebuild_form('ftt_quiz_pseudouser_form', $form_state); 
+	return render($form);	
+}
+function ftt_quiz_pseudouser_reset_name($form, &$form_state){
+	unset($_SESSION['student_name']);	
+	$form = drupal_rebuild_form('ftt_quiz_pseudouser_form', $form_state);		
+	return render($form);
+}
+
+/**
+ * Implements hook_block_info()
+ */
+function ftt_quiz_pseudouser_block_info(){
+	$blocks['enter_name'] = array(
+			'info' => t('Entering name'),
+			'cache' => DRUPAL_NO_CACHE,
+		);
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_view()
+ */
+function ftt_quiz_pseudouser_block_view($delta = 'enter_name'){
+	$block = array();
+	$form = drupal_get_form('ftt_quiz_pseudouser_form');
+	$block['content'] = render($form);
+	return $block;
+}
+
+/**
+ * Implements hook_quiz_result_insert()
+ */
+function ftt_quiz_pseudouser_quiz_result_insert($quiz_result){
+	global $user;
+	if($user->uid == 0){
+		if(!isset($_SESSION['student_name'])){
+			drupal_goto('node/' . $quiz_result->nid);
+			return;
+		}
+	$rid = db_insert('ftt_quiz_pseudouser')
+		->fields(array(
+			'rid' => $quiz_result->result_id,
+			'student_name' => $_SESSION['student_name'],
+			))
+		->execute();
+	}
+}
+function ftt_quiz_pseudouser_node_form($form, &$form_state, $nid){
+	$form = array();
+	$form['nid'] = array(
+		'#type' => 'hidden',
+		'#value' => $nid,		
+		);
+	$form['name'] = array(
+			'#type' => 'textfield',
+			'#title' => t('Enter your name'),
+			'#size' => 30,
+			'#maxlength' => 128,
+			'#required' => TRUE,
+			'#prefix' => t('You can not take a Quiz without entering your name!'),			
+		);
+	$form['save'] = array(
+			'#type' => 'submit',
+			'#value' => t('Save'),			
+			'#ajax' => array(
+					'callback' => 'ftt_quiz_pseudouser_grant_quiz',
+					'wrapper' => 'ftt-quiz-pseudouser-node-form',
+					'method' => 'replace',
+				),
+		);	
+	return $form;
+}
+
+function ftt_quiz_pseudouser_grant_quiz($form, &$form_state){
+	$_SESSION['student_name'] = $form_state['values']['name'];	
+	$form = drupal_rebuild_form('ftt_quiz_pseudouser_form', $form_state); 	
+	return node_view(node_load($form_state['values']['nid']));
+}
+
+/**
+ * Implements hook_node_view_alter()
+ */
+function ftt_quiz_pseudouser_node_view_alter(&$build){	
+	global $user;
+	if($user->uid == 0 && !isset($_SESSION['student_name'])){
+		if($build['#node']->type == 'quiz' && $build['#view_mode'] == 'full'){
+			$nid = $build['#node']->nid;
+			$build = drupal_get_form('ftt_quiz_pseudouser_node_form', $nid);			
+		}
+	}
+}
+
+/**
+ * Implements hook_views_pre_render()
+ */
+function ftt_quiz_pseudouser_views_pre_render(&$view){
+	if($view->name == 'quiz_results'){
+		foreach ($view->result as $key => $result) {
+			if($result->users_quiz_node_results_uid == '0'){
+				$name = db_select('ftt_quiz_pseudouser', 'f')
+				->fields('f', array('student_name'))
+				->condition('f.rid', $result->result_id)
+				->execute()
+				->fetchField();
+				$view->result[$key]->users_quiz_node_results_name = $name;
+			}
+		}
+	}
+}

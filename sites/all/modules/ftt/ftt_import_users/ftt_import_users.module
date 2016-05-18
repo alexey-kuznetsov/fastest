@@ -1,0 +1,250 @@
+<?php
+/**
+ * Implements hook_menu();
+ */
+
+function ftt_import_users_menu(){
+	$items = array();
+
+	$items['node/%node/import-users'] = array(
+    'title' => 'Import users',
+    'page callback' => 'ftt_import_users_page',
+    //'page_callback' => 'drupal_get_form',
+    'page arguments' => array(1),
+    //'page_arguments' => array('ftt_import_users_form'),
+    'file' => 'ftt_import_users.module',
+    'access callback' => 'node_access',
+    'access arguments' => array('update', 1),
+    'weight' => 0,
+    //'type' => MENU_LOCAL_TASK,
+    //'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,    
+  );
+
+	return $items;
+}
+
+/**
+ * Get all users of a group
+ */
+function _get_users_in_group($gid) {
+  $query = db_select('users', 'u');
+ 
+  $query
+    ->condition('u.uid', 0, '<>')
+    ->condition('u.status', 1, '=')
+    ->fields('u', array('uid'))
+    ->join('og_membership', 'ogm', "ogm.gid = :gid AND u.uid = ogm.etid AND ogm.entity_type = 'user'", array(':gid' => $gid));
+  return $query->execute()->fetchAll();
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ * to unset our new tabwhere it is not neccessary
+ */
+function ftt_import_users_menu_local_tasks_alter(&$data, $router_item, $root_path) {  
+  foreach ($router_item['page_arguments'] as $key => $argument) {
+    if (is_object($argument) && isset($router_item['page_arguments']->nid)) { 
+    	if($router_item['page_arguments'][$key]->type != 'group'){
+	      foreach ($data['tabs'][0]['output'] as $key => $value) {
+	        if ($value['#link']['path'] == 'node/%/import-users') { 
+	          unset($data['tabs'][0]['output'][$key]);
+	        }
+	      }
+	    }
+    }
+  }
+}
+
+function ftt_import_users_page($node){	
+	$form = drupal_get_form('ftt_import_users_form', $node);
+	$output = drupal_render($form);
+	return $output;
+}
+
+function ftt_import_users_form($form, &$form_state, $node){	
+	$output = t('This group already contents the next users:<br>');
+	//var_dump($node);
+	$users = array();
+	$uids = _get_users_in_group($node->nid);	
+	foreach($uids as $uid){
+		$users[] = user_load($uid->uid);
+	}
+	//ob_start(); var_dump($users); $output .= ob_get_clean();
+	foreach ($users as $user) {
+		$tempname = array();
+		$tempname[] = !empty($user->field_surname) ? $user->field_surname['und'][0]['value'] : '';
+		$tempname[] = !empty($user->field_name) ? $user->field_name['und'][0]['value'] : '';
+		$tempname[] = !empty($user->field_patronymic) ? $user->field_patronymic['und'][0]['value'] : '';
+		$i=0;
+		foreach ($tempname as $tmp) {
+			if($tmp == '') unset($tempname[$i]);
+			$i++;
+		}
+		$uname = empty($tempname) ? $user->name : implode(' ', $tempname);
+		$output .= l($uname, drupal_get_path_alias('user/'. $user->uid)) . '<br>';
+	}
+	
+	$form = array();
+  $form['description'] = array(
+    '#markup' => $output . t('This form allows to import users into group.') . '<br />',
+  );
+   $form['users'] = array(
+    '#type' => 'file',
+    '#title' => t('Users data file'),
+    '#description' => t('File of XLS format.'),
+    '#upload_validators' => array('file_validate_extensions' => array('xls')),
+  );
+  $form['gid'] = array(
+  		'#type' => 'hidden',
+  		'#value' => $node->nid,
+  	); 
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Import'),
+  );
+	//$output .= render($form);	
+	return $form;
+}
+
+/*
+ * Implements hook_form_validate()
+**/
+function ftt_import_users_form_validate($form, &$form_state){
+	  $name = $_FILES['files']['name']['users'];
+  if (empty($name)) {
+    form_set_error('users', t('Please select users data file.'));
+    return;
+  }
+  if (!preg_match('/\.(xls|XLS)$/', $name)) {
+    form_set_error('users', t('Unsupported file format.'));
+  }
+}
+
+function ftt_import_users_form_submit($form_id, &$form_state){
+	global $user;
+	
+  $tmp_name = $_FILES['files']['tmp_name']['users'];
+
+  require_once(libraries_get_path('phpexcel') . '/PHPExcel.php');
+  $objPHPExcel = PHPExcel_IOFactory::load($tmp_name); 
+  $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+
+  if (count($sheetData) < 2) {
+    drupal_set_message(t('File is empty.'), 'error');
+    return;
+  }
+  $fields = array_keys(_ftt_import_users_get_fields());
+  $gid = $form_state['values']['gid'];
+  $error = '';
+  $success = 'Successfully added the following users:<br>';
+   
+  foreach ($sheetData as $i => $row) {
+    if ($i == 1) {
+      continue;
+    }
+    $row = array_combine($fields, $row);
+    $name = transliteration_get($row['field_surname']) . mb_substr(transliteration_get($row['field_name']),0,1) . mb_substr(transliteration_get($row['field_patronymic']),0,1);
+    $name = _ftt_import_users_validate_free_name($name);
+//Verify email!
+    $mailquery = db_select('users', 'u')
+		->fields('u', array('mail'))
+		->condition('u.mail', $row['email'])
+		->execute()
+		->fetchAll();
+		if(!empty($mailquery)){
+			$error .= implode(' ', $row) . '<br>';
+			continue;
+		}
+    $row['name'] = $name;
+    // Create user
+    $new_user = array(
+	  'name' => $row['name'],
+	  'pass' => $row['email'], 
+	  'mail' => $row['email'], 
+	  'status' => 1,
+	  'init' => $row['email'], 
+	  'roles' => array(
+	    DRUPAL_AUTHENTICATED_RID => 'authenticated user',
+	    5 => 'Студент',
+  		),
+	  'field_surname' => array(
+	  	'und' => array(
+	  		0 => array(
+	  			'value' => $row['field_surname'],
+	  			),
+	  		),
+	  	),
+	  'field_name' => array(
+	  	'und' => array(
+	  		0 => array(
+	  			'value' => $row['field_name'],
+	  			),
+	  		),
+	  	),
+	  'field_patronymic' => array(
+	  	'und' => array(
+	  		0 => array(
+	  			'value' => $row['field_patronymic'],
+	  			),
+	  		),
+	  	),
+	  );
+	  
+user_save('', $new_user);
+$success .= implode(' ', $row) . '<br>';
+$usr = user_load_by_name($new_user['name']);
+og_group('node', $gid, array(
+                "entity type"       => "user",
+                "entity"        => $usr,
+                "membership type"   => OG_MEMBERSHIP_TYPE_DEFAULT,
+            ));
+
+    // Changes the users role in the group (1 = non-member, 2 = member, 3 = administrator member)
+    og_role_grant('node', $gid, $usr->uid, 2);    
+	}
+	drupal_set_message($success);
+	if($error != ''){
+		drupal_set_message(t('The following records was ignored: <br>') . $error, 'error');
+	}
+	return $output;
+}
+
+function _ftt_import_users_get_fields(){
+	return array(
+		'field_surname' => t('SurName'), 
+		'field_name' => t('Name'), 
+		'field_patronymic' => t('patronymic'), 		
+		'email' => 'Email',
+		);
+}
+
+/**
+ * Validate if new username is free
+ */
+function _ftt_import_users_validate_free_name($name, &$i=0){
+	if($i == 0){$names = db_select('users', 'u')
+		->fields('u', array('name'))
+		->condition('u.name', $name)
+		->execute()
+		->fetchAll();
+	if(empty($names)) {return $name;}
+		else {
+			$i++; 
+			$newname = _ftt_import_users_validate_free_name($name, $i);
+			return $newname;
+		}
+	}
+	else {		
+			$names = db_select('users', 'u')
+			->fields('u', array('name'))
+			->condition('u.name', $name . $i)
+			->execute()
+			->fetchAll(); 
+			if(empty($names)){ 
+				return $name . $i;
+			} else {
+				$i++;	
+				$newname = _ftt_import_users_validate_free_name($name, $i);
+				return $newname;}
+	}
+}
