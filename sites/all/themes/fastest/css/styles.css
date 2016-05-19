@@ -325,9 +325,10 @@ button,
   background: #033b5d;
   border: 0;
   border-radius: 3px;
+  margin-bottom: 10px;
 }
 
-/* line 35, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
+/* line 36, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
 .button:hover, .button:focus, .button:active,
 button:hover,
 [type='button']:hover,
@@ -345,7 +346,7 @@ button:active,
   color: #fff;
 }
 
-/* line 47, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
+/* line 48, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
 .button[disabled],
 button[disabled],
 [disabled][type='button'],
@@ -355,7 +356,7 @@ button[disabled],
   color: #999999;
 }
 
-/* line 52, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
+/* line 53, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
 .button[disabled]:hover, .button[disabled]:focus, .button[disabled]:active,
 button[disabled]:hover,
 [disabled][type='button']:hover,
@@ -372,7 +373,7 @@ button[disabled]:active,
   color: #999999;
 }
 
-/* line 60, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
+/* line 61, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/button/_button.scss */
 .button:not(:last-child),
 button:not(:last-child),
 [type='button']:not(:last-child),
@@ -711,6 +712,17 @@ tr:nth-child(2n) {
   }
 }
 
+/* line 23, /home/alex/sites/fastest/sites/all/themes/fastest/sass/layouts/layout-swap/_layout-swap.scss */
+.layout-swap__top {
+  position: fixed;
+  top: 0;
+}
+
+/* line 27, /home/alex/sites/fastest/sites/all/themes/fastest/sass/layouts/layout-swap/_layout-swap.scss */
+.layout-swap__top .navbar {
+  display: none;
+}
+
 @media (min-width: 555px) {
   /* line 23, /home/alex/sites/fastest/sites/all/themes/fastest/sass/layouts/layout-swap/_layout-swap.scss */
   .layout-swap__top {
@@ -719,6 +731,20 @@ tr:nth-child(2n) {
     height: 48px;
     width: 100%;
   }
+  /* line 36, /home/alex/sites/fastest/sites/all/themes/fastest/sass/layouts/layout-swap/_layout-swap.scss */
+  .layout-swap__top .navbar {
+    display: block;
+  }
+}
+
+/* line 42, /home/alex/sites/fastest/sites/all/themes/fastest/sass/layouts/layout-swap/_layout-swap.scss */
+.layout-swap__top.expanded .navbar {
+  display: block;
+}
+
+/* line 45, /home/alex/sites/fastest/sites/all/themes/fastest/sass/layouts/layout-swap/_layout-swap.scss */
+.layout-swap__top.expanded .navbar li {
+  width: 100%;
 }
 
 /* line 14, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/autocomplete/_autocomplete.scss */
@@ -1105,50 +1131,64 @@ th .checkbox {
   text-align: center;
 }
 
-/* line 16, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 11, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+.header {
+  min-height: 3em;
+}
+
+/* line 17, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__logo {
   float: left;
   margin: 0 10px 0 0;
   padding: 0;
 }
 
-/* line 28, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 29, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__logo-image {
   vertical-align: bottom;
 }
 
-/* line 33, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 34, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__name-and-slogan {
   float: left;
 }
 
-/* line 38, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 39, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-name {
   margin: 0;
+  position: fixed;
+  z-index: 2;
 }
 
-/* line 45, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+@media (min-width: 555px) {
+  /* line 39, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+  .header__site-name {
+    position: static;
+  }
+}
+
+/* line 52, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-link:link, .header__site-link:visited {
   color: #000;
   text-decoration: none;
 }
 
-/* line 51, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 58, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-link:hover, .header__site-link:focus {
   text-decoration: underline;
 }
 
-/* line 58, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 65, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-slogan {
   margin: 0;
 }
 
-/* line 63, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 70, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__secondary-menu {
   float: right;
 }
 
-/* line 72, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 79, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__region {
   clear: both;
 }
@@ -1841,6 +1881,19 @@ tr.drag-previous {
 /* line 29, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
 .layout-swap__top {
   background-color: #666666;
+}
+
+/**
+ * Hamburger icon
+ */
+/* line 36, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+a#main-menu {
+  text-decoration: none;
+  color: #fff;
+  font-size: 3em;
+  font-weight: bold;
+  line-height: 1em;
+  float: right;
 }
 
 /*# sourceMappingURL=styles.css.map */

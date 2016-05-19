@@ -189,3 +189,5 @@ $include-rtl: false;
 @if not $include-rtl {
   $zen-rtl-selector: false !global;
 }
+
+$mobile-nav-height: 3em;

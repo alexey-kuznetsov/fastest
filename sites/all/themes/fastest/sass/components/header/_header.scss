@@ -11,6 +11,7 @@
 .header,
 %header {
   @extend %clearfix;
+  min-height: $mobile-nav-height;
 
   // Wrapping link for logo.
   &__logo {
@@ -38,6 +39,12 @@
   &__site-name {
     @extend %h1;
     margin: 0;
+    position: fixed;
+    z-index: 2;
+
+    @include respond-to(xs) {
+      position: static;
+    }
   }
 
   // The link around the name of the website.

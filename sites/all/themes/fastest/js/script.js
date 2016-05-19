@@ -14,11 +14,36 @@
 
   'use strict';
 
+  function mobileMenu() {
+    $('#main-menu').removeClass('visually-hidden--focusable');
+  }
+
+  function desktopMenu() {
+    $('#main-menu').addClass('visually-hidden--focusable');
+  }
+
   // To understand behaviors, see https://drupal.org/node/756722#behaviors
   Drupal.behaviors.my_custom_behavior = {
     attach: function (context, settings) {
 
-      // Place your code here.
+      $(document).ready(function () {
+        if (window.matchMedia('(max-width: 555px)').matches) {
+          mobileMenu();
+        }
+      });
+      $(window).resize(function () {
+        if (window.matchMedia('(max-width: 555px)').matches) {
+          mobileMenu();
+        }
+        else {
+          desktopMenu();
+        }
+      });
+
+      $('#main-menu').click(function (e) {
+        e.preventDefault();
+        $('.layout-swap__top').toggleClass('expanded');
+      });
 
     }
   };

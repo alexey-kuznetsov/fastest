@@ -21,11 +21,31 @@ $layout-swap-height: 2 * $base-line-height;
   }
 
   &__top {
+    position: fixed;
+    top: 0;
+
+    .navbar {
+      display: none;
+    }
     @include respond-to(xs) {
       position: absolute;
       top: 0;
       height: $layout-swap-height;
       width: 100%;
+
+      .navbar {
+        display: block;
+      }
+    }
+
+    &.expanded {
+      .navbar {
+        display: block;
+
+        li {
+          width: 100%;
+        }
+      }
     }
   }
 }

@@ -29,3 +29,15 @@
 .layout-swap__top {
 	background-color: color('navbar');
 }
+
+/**
+ * Hamburger icon
+ */
+ a#main-menu {
+ 	text-decoration: none;
+  color: #fff;
+  font-size: $mobile-nav-height;
+  font-weight: bold;
+  line-height: 1em;
+  float: right;
+ }
