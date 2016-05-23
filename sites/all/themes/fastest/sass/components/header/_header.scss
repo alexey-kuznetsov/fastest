@@ -16,12 +16,28 @@
   // Wrapping link for logo.
   &__logo {
     float: left;
-    margin: 0 10px 0 0;
+    margin: 5px;
     padding: 0;
+    position: fixed;
+    z-index: 2;
+
+    img {
+        height: 2.4em;
+      }
 
     @include rtl() {
       float: right;
       margin: 0 0 0 10px;
+    }
+
+
+    @include respond-to(xs) {
+      position: static;
+      margin: 20px 0;
+
+      img {
+        height: 50px;
+      }
     }
   }
 
@@ -64,6 +80,10 @@
   // The slogan (or tagline) of a website.
   &__site-slogan {
     margin: 0;
+
+    @include respond-to(xs) {
+      margin: 47px 0 0 20px;
+    }
   }
 
   // The secondary menu (login, etc.)

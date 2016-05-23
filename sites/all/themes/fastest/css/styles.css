@@ -1139,21 +1139,40 @@ th .checkbox {
 /* line 17, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__logo {
   float: left;
-  margin: 0 10px 0 0;
+  margin: 5px;
   padding: 0;
+  position: fixed;
+  z-index: 2;
 }
 
-/* line 29, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 24, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+.header__logo img {
+  height: 2.4em;
+}
+
+@media (min-width: 555px) {
+  /* line 17, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+  .header__logo {
+    position: static;
+    margin: 20px 0;
+  }
+  /* line 38, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+  .header__logo img {
+    height: 50px;
+  }
+}
+
+/* line 45, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__logo-image {
   vertical-align: bottom;
 }
 
-/* line 34, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 50, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__name-and-slogan {
   float: left;
 }
 
-/* line 39, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 55, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-name {
   margin: 0;
   position: fixed;
@@ -1161,34 +1180,41 @@ th .checkbox {
 }
 
 @media (min-width: 555px) {
-  /* line 39, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+  /* line 55, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
   .header__site-name {
     position: static;
   }
 }
 
-/* line 52, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 68, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-link:link, .header__site-link:visited {
   color: #000;
   text-decoration: none;
 }
 
-/* line 58, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 74, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-link:hover, .header__site-link:focus {
   text-decoration: underline;
 }
 
-/* line 65, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 81, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__site-slogan {
   margin: 0;
 }
 
-/* line 70, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+@media (min-width: 555px) {
+  /* line 81, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+  .header__site-slogan {
+    margin: 47px 0 0 20px;
+  }
+}
+
+/* line 90, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__secondary-menu {
   float: right;
 }
 
-/* line 79, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
+/* line 99, /home/alex/sites/fastest/sites/all/themes/fastest/sass/components/header/_header.scss */
 .header__region {
   clear: both;
 }
