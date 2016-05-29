@@ -43,13 +43,14 @@
  }
 
  /**
-  *  'My tests' view
+  *  'My tests' and 'My questions' views
   */
-  .view-my-tests {
+  .view-my-tests,
+  .view-my-questions {
     .views-row {
       border: 1px solid color('border');
       border-radius: 5px;
-      padding: 10px 10px 0 10px;
+      padding: 10px 10px 0;
       margin-bottom: 10px;
 
       &:hover {
@@ -78,7 +79,8 @@
         }
       }
 
-      .views-field-nid {
+      .views-field-nid,
+      .views-field-edit-node {
         @include button(color('blue'));
 
         a {

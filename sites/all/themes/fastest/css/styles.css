@@ -1923,54 +1923,64 @@ a#main-menu {
 }
 
 /**
-  *  'My tests' view
+  *  'My tests' and 'My questions' views
   */
-/* line 49, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-.view-my-tests .views-row {
+/* line 50, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row,
+.view-my-questions .views-row {
   border: 1px solid #cccccc;
   border-radius: 5px;
-  padding: 10px 10px 0 10px;
+  padding: 10px 10px 0;
   margin-bottom: 10px;
 }
 
-/* line 55, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-.view-my-tests .views-row:hover {
+/* line 56, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row:hover,
+.view-my-questions .views-row:hover {
   background-color: #e1f3fe;
 }
 
-/* line 59, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-.view-my-tests .views-row .views-field {
+/* line 60, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field,
+.view-my-questions .views-row .views-field {
   margin-bottom: 10px;
 }
 
-/* line 62, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-.view-my-tests .views-row .views-field input {
+/* line 63, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field input,
+.view-my-questions .views-row .views-field input {
   margin-bottom: 0;
 }
 
 @media (min-width: 555px) {
-  /* line 59, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-  .view-my-tests .views-row .views-field {
+  /* line 60, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+  .view-my-tests .views-row .views-field,
+  .view-my-questions .views-row .views-field {
     display: inline-block;
     margin-right: 20px;
   }
 }
 
-/* line 72, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-.view-my-tests .views-row .views-field-title {
+/* line 73, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field-title,
+.view-my-questions .views-row .views-field-title {
   font-weight: bold;
   font-size: 1.2em;
 }
 
 @media (min-width: 555px) {
-  /* line 72, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-  .view-my-tests .views-row .views-field-title {
+  /* line 73, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+  .view-my-tests .views-row .views-field-title,
+  .view-my-questions .views-row .views-field-title {
     width: 70%;
   }
 }
 
-/* line 81, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-.view-my-tests .views-row .views-field-nid {
+/* line 82, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field-nid,
+.view-my-tests .views-row .views-field-edit-node,
+.view-my-questions .views-row .views-field-nid,
+.view-my-questions .views-row .views-field-edit-node {
   display: inline-block;
   padding: 5px 15px;
   line-height: inherit;
@@ -1982,8 +1992,11 @@ a#main-menu {
   border-radius: 3px;
 }
 
-/* line 84, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
-.view-my-tests .views-row .views-field-nid a {
+/* line 86, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field-nid a,
+.view-my-tests .views-row .views-field-edit-node a,
+.view-my-questions .views-row .views-field-nid a,
+.view-my-questions .views-row .views-field-edit-node a {
   color: #fff;
   text-decoration: none;
 }

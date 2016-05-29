@@ -1,0 +1,4 @@
+name = FTT Misc
+description = Miscellanious functions for FTT project
+core = 7.x
+package = "FTT"
