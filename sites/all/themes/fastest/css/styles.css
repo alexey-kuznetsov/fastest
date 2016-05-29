@@ -1972,7 +1972,7 @@ a#main-menu {
   /* line 73, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
   .view-my-tests .views-row .views-field-title,
   .view-my-questions .views-row .views-field-title {
-    width: 70%;
+    width: 55%;
   }
 }
 
