@@ -41,3 +41,50 @@
   line-height: 1em;
   float: right;
  }
+
+ /**
+  *  'My tests' view
+  */
+  .view-my-tests {
+    .views-row {
+      border: 1px solid color('border');
+      border-radius: 5px;
+      padding: 10px 10px 0 10px;
+      margin-bottom: 10px;
+
+      &:hover {
+        background-color: color('blue-light');
+      }
+
+      .views-field {
+        margin-bottom: 10px;
+
+        input {
+          margin-bottom: 0;
+        }
+
+        @include respond-to(xs) {
+          display: inline-block;
+          margin-right: 20px;
+        }
+      }
+
+      .views-field-title {
+        font-weight: bold;
+        font-size: 1.2em;
+
+        @include respond-to(xs) {
+          width: 70%;
+        }
+      }
+
+      .views-field-nid {
+        @include button(color('blue'));
+
+        a {
+          color: #fff;
+          text-decoration: none;
+        }
+      }
+    }
+  }

@@ -1922,4 +1922,70 @@ a#main-menu {
   float: right;
 }
 
+/**
+  *  'My tests' view
+  */
+/* line 49, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row {
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  padding: 10px 10px 0 10px;
+  margin-bottom: 10px;
+}
+
+/* line 55, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row:hover {
+  background-color: #e1f3fe;
+}
+
+/* line 59, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field {
+  margin-bottom: 10px;
+}
+
+/* line 62, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field input {
+  margin-bottom: 0;
+}
+
+@media (min-width: 555px) {
+  /* line 59, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+  .view-my-tests .views-row .views-field {
+    display: inline-block;
+    margin-right: 20px;
+  }
+}
+
+/* line 72, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field-title {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+@media (min-width: 555px) {
+  /* line 72, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+  .view-my-tests .views-row .views-field-title {
+    width: 70%;
+  }
+}
+
+/* line 81, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field-nid {
+  display: inline-block;
+  padding: 5px 15px;
+  line-height: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff;
+  background: #0779bf;
+  border: 0;
+  border-radius: 3px;
+}
+
+/* line 84, /home/alex/sites/fastest/sites/all/themes/fastest/sass/ftt/_misc.scss */
+.view-my-tests .views-row .views-field-nid a {
+  color: #fff;
+  text-decoration: none;
+}
+
 /*# sourceMappingURL=styles.css.map */
