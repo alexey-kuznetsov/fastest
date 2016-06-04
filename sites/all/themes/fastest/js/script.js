@@ -45,6 +45,14 @@
         $('.layout-swap__top').toggleClass('expanded');
       });
 
+      $('.answering-form input[type="submit"]').click(function (e) {
+        if ($(this).hasClass('clicked')) {e.preventDefault();} else {
+          $('.answering-form input[type="submit"]').each(function () {
+            $(this).addClass('clicked');
+          });
+        }
+      });
+
     }
   };
 
