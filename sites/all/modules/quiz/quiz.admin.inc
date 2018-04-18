@@ -40,7 +40,7 @@ function quiz_admin_settings($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Index questions'),
     '#default_value' => variable_get('quiz_index_questions', 1),
-    '#description' => t('If you turn this off, questions will not show up in search results.'),
+    '#description' => t('If you turn this off, questions will not show up in search results. Note that you will need to enable the "View quiz question outside of a quiz" permission for anonymous users, as search needs this to index the question.'),
   );
 
   $form['quiz_global_settings']['quiz_default_close'] = array(
@@ -168,68 +168,6 @@ function quiz_admin_settings($form, &$form_state) {
     '#default_value' => QUIZ_NAME,
     '#description' => t('Change the name of the quiz type. Do you call it <em>test</em> or <em>assessment</em> instead? Change the display name of the module to something else. By default, it is called <em>Quiz</em>.'),
     '#required' => TRUE,
-  );
-
-  $form['quiz_email_settings'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Notifications'),
-    '#description' => t('Send results to quiz author/attendee via email. Configure email subject and body.'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-
-  $form['quiz_email_settings']['taker'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Email for Quiz takers'),
-    '#collapsible' => FALSE,
-  );
-
-  $form['quiz_email_settings']['taker']['quiz_email_results'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Email results to quiz takers'),
-    '#default_value' => variable_get('quiz_email_results', 0),
-    '#description' => t('Check this to send users their results at the end of a quiz.')
-  );
-
-  $form['quiz_email_settings']['taker']['quiz_email_results_subject_taker'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Configure email subject'),
-    '#description' => t('This format will be used when sending quiz results at the end of a quiz.'),
-    '#default_value' => variable_get('quiz_email_results_subject_taker', quiz_email_results_format('subject', 'taker')),
-  );
-
-  $form['quiz_email_settings']['taker']['quiz_email_results_body_taker'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Configure email format'),
-    '#description' => t('This format will be used when sending quiz results at the end of a quiz. !title(quiz title), !sitename, !taker(quiz takers username), !date(time when quiz was finished), !minutes(How many minutes the quiz taker spent taking the quiz), !desc(description of the quiz), !correct(points attained), !total(max score for the quiz), !percentage(percentage score), !url(url to the result page) and !author are placeholders.'),
-    '#default_value' => variable_get('quiz_email_results_body_taker', quiz_email_results_format('body', 'taker')),
-  );
-
-  $form['quiz_email_settings']['author'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Email for Quiz authors'),
-    '#collapsible' => FALSE,
-  );
-
-  $form['quiz_email_settings']['author']['quiz_results_to_quiz_author'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Email all results to quiz author'),
-    '#default_value' => variable_get('quiz_results_to_quiz_author', 0),
-    '#description' => t('Check this to send quiz results for all users to the quiz author.'),
-  );
-
-  $form['quiz_email_settings']['author']['quiz_email_results_subject'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Configure email subject'),
-    '#description' => t('This format will be used when sending quiz results at the end of a quiz. Authors and quiz takers gets the same format.'),
-    '#default_value' => variable_get('quiz_email_results_subject', quiz_email_results_format('subject', 'author')),
-  );
-
-  $form['quiz_email_settings']['author']['quiz_email_results_body'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Configure email format'),
-    '#description' => t('This format will be used when sending @quiz results at the end of a quiz. !title(quiz title), !sitename, !taker(quiz takers username), !date(time when quiz was finished), !minutes(How many minutes the quiz taker spent taking the quiz), !desc(description of the quiz), !correct(points attained), !total(max score for the quiz), !percentage(percentage score), !url(url to the result page) and !author are placeholders.'),
-    '#default_value' => variable_get('quiz_email_results_body', quiz_email_results_format('body', 'author')),
   );
 
   $form['#validate'][] = 'quiz_settings_form_validate';
@@ -381,9 +319,7 @@ function quiz_admin_results($quiz, $quiz_result) {
  * @return
  *   String containing the form.
  */
-function quiz_questions($node) {
-  // Set page title.
-  drupal_set_title($node->title);
+function quiz_questions_page($node) {
   if ($node->randomization < 3) {
     $mq_form = drupal_get_form('quiz_questions_form', $node);
     $manage_questions = drupal_render($mq_form);
@@ -408,7 +344,11 @@ function quiz_questions($node) {
   else {
     $form = drupal_get_form('quiz_categorized_form', $node);
   }
-  return $form;
+  $variables = array(
+    'node' => $node,
+    'form' => $form,
+  );
+  return theme('quiz_questions_page', $variables);
 }
 
 /**
@@ -846,20 +786,6 @@ function _quiz_add_fields_for_random_quiz(&$form, $quiz) {
     '#title' => t('Max score for each random question'),
     '#default_value' => isset($quiz->max_score_for_random) ? $quiz->max_score_for_random : 1,
   );
-  if ($quiz->randomization == 3) {
-    $terms = _quiz_taxonomy_select($quiz->tid);
-    if (!empty($terms) && function_exists('taxonomy_get_vocabularies')) {
-      $form['question_list']['random_settings']['random_term_id'] = array(
-        '#type' => 'select',
-        '#title' => t('Terms'),
-        '#size' => 1,
-        '#options' => _quiz_taxonomy_select($quiz->tid),
-        '#default_value' => $quiz->tid,
-        '#description' => t('Randomly select from questions with this term, or choose from the question pool below'),
-        '#weight' => -4,
-      );
-    }
-  }
 }
 
 /**
@@ -1186,38 +1112,24 @@ function quiz_questions_form_submit($form, &$form_state) {
   $compulsories = isset($form_state['values']['compulsories']) ? $form_state['values']['compulsories'] : NULL;
 
   $num_random = isset($form_state['values']['num_random_questions']) ? $form_state['values']['num_random_questions'] : 0;
-
-
   $quiz->max_score_for_random = isset($form_state['values']['max_score_for_random']) ? $form_state['values']['max_score_for_random'] : 1;
-  $term_id = isset($form_state['values']['random_term_id']) ? (int) $form_state['values']['random_term_id'] : 0;
-
 
   // Store what questions belong to the quiz
-  $questions = _quiz_update_items($quiz, $weight_map, $max_scores, $auto_update_max_scores, $is_new_revision, $refreshes, $stayers, $qnr_ids_map, $qnr_pids_map, $compulsories, $stayers);
+  $questions = _quiz_update_items($quiz, $weight_map, $max_scores, $auto_update_max_scores, $is_new_revision, $refreshes, $stayers, $qnr_ids_map, $qnr_pids_map, $compulsories);
 
   // If using random questions and no term ID is specified, make sure we have enough.
-  if (empty($term_id)) {
-    $assigned_random = 0;
+  $assigned_random = 0;
 
-    foreach ($questions as $question) {
-      if ($question->question_status == QUIZ_QUESTION_RANDOM) {
-        ++$assigned_random;
-      }
-    }
-
-    // Adjust number of random questions downward to match number of selected questions..
-    if ($num_random > $assigned_random) {
-      $num_random = $assigned_random;
-      drupal_set_message(t('The number of random questions for this @quiz have been lowered to %anum to match the number of questions you assigned.', array('@quiz' => QUIZ_NAME, '%anum' => $assigned_random), array('langcode' => 'warning')));
+  foreach ($questions as $question) {
+    if ($question->question_status == QUIZ_QUESTION_RANDOM) {
+      ++$assigned_random;
     }
   }
-  else {
-    // Warn user if not enough questions available with this term_id.
-    $available_random = count(_quiz_get_random_taxonomy_question_ids($term_id, $num_random));
-    if ($num_random > $available_random) {
-      $num_random = $available_random;
-      drupal_set_message(t('There are currently not enough questions assigned to this term (@random). Please lower the number of random quetions or assign more questions to this taxonomy term before taking this @quiz.', array('@random' => $available_random, '@quiz' => QUIZ_NAME)), 'error');
-    }
+
+  // Adjust number of random questions downward to match number of selected questions..
+  if ($num_random > $assigned_random) {
+    $num_random = $assigned_random;
+    drupal_set_message(t('The number of random questions for this @quiz have been lowered to %anum to match the number of questions you assigned.', array('@quiz' => QUIZ_NAME, '%anum' => $assigned_random), array('langcode' => 'warning')));
   }
 
   if ($quiz->type == 'quiz') {
@@ -1226,7 +1138,6 @@ function quiz_questions_form_submit($form, &$form_state) {
       ->fields(array(
         'number_of_random_questions' => $num_random ? $num_random : 0,
         'max_score_for_random' => $quiz->max_score_for_random,
-        'tid' => $term_id,
       ))
       ->condition('vid', $quiz->vid)
       ->condition('nid', $quiz->nid)
@@ -1246,6 +1157,7 @@ function quiz_questions_form_submit($form, &$form_state) {
   }
 
   if (isset($success) && isset($success2)) {
+    entity_get_controller('node')->resetCache(array($quiz->nid));
     drupal_set_message(t('Questions updated successfully.'));
   }
   else {
@@ -1283,55 +1195,6 @@ function _quiz_question_browser_submit($form, &$form_state) {
       }
     }
   }
-}
-
-// THEME FUNCTIONS
-
-/**
- * Theme a question selection table, adding drag and drop support.
- */
-function theme_question_selection_table($variables) {
-  $form = $variables['form'];
-  drupal_add_tabledrag('question-list', 'match', 'parent', 'qnr-pid', 'qnr-pid', 'qnr-id', TRUE, 1);
-  drupal_add_tabledrag('question-list', 'order', 'sibling', 'question-list-weight');
-
-  // Building headers
-  $headers = array(t('Question'), t('Type'), t('Actions'), t('Update'), t('Max score'), t('Auto update max score'), t('Delete'));
-  if (isset($form['compulsories'])) {
-    $headers[] = t('Compulsory');
-  }
-  $headers[] = t('Weight');
-  $headers[] = t('Parent ID');
-  $headers[] = array(
-    'data' => t('ID'),
-    'class' => array('tabledrag-hide'),
-  );
-
-  // Building table body
-  $rows = array();
-  if (!empty($form['titles'])) {
-    foreach (element_children($form['titles']) as $id) {
-      $form['weights'][$id]['#attributes']['class'] = array('question-list-weight');
-      $form['qnr_ids'][$id]['#attributes']['class'] = array('qnr-id');
-      $form['qnr_pids'][$id]['#attributes']['class'] = array('qnr-pid');
-      $rows[] = _quiz_get_question_row($form, $id);
-    }
-    // Make sure the same fields aren't rendered twice
-    unset($form['types'], $form['view_links'], $form['remove_links'], $form['stayers']);
-    unset($form['max_scores'], $form['auto_update_max_scores'], $form['revision'], $form['weights'], $form['titles'], $form['compulsories'], $form['qnr_ids'], $form['qnr_pids']);
-  }
-  $html_attr = array('id' => 'question-list');
-
-  // We hide the table if no questions have been added so that jQuery can show it the moment the first question is beeing added.
-  if (isset($form['no_questions'])) {
-    $html_attr['style'] = "display:none;";
-  }
-
-  $table = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => $html_attr));
-
-  return drupal_render($form['random_settings'])
-    . $table
-    . drupal_render_children($form);
 }
 
 // HELPER FUNCTIONS
@@ -1462,58 +1325,6 @@ function quiz_set_auto_title() {
   $max_length = variable_get('quiz_autotitle_length', 50);
   drupal_add_js(array('quiz_max_length' => $max_length), array('type' => 'setting'));
   drupal_add_js(drupal_get_path('module', 'quiz') . '/js/quiz.auto-title.js');
-}
-
-/**
- * Themes a categorized quiz form
- */
-function theme_quiz_categorized_form($variables) {
-  $form = $variables['form'];
-  $output = '';
-  $rows = array();
-  foreach ($form as $key => &$existing) {
-    if (!is_numeric($key)) {
-      continue;
-    }
-    $cols = array();
-    $cols[] = drupal_render($existing['name']);
-    $cols[] = drupal_render($existing['number']);
-    $cols[] = drupal_render($existing['max_score']);
-    $cols[] = drupal_render($existing['remove']);
-    $cols[] = drupal_render($existing['weight']);
-    $rows[] = array(
-      'data' => $cols,
-      'class' => array('draggable'),
-    );
-  }
-  if (!empty($rows)) {
-    $header = array(
-      t('Category'),
-      t('Number of questions'),
-      t('Max score per question'),
-      t('Remove'),
-      t('Weight'),
-    );
-    drupal_add_tabledrag('existing-terms', 'order', 'sibling', 'term-weight', NULL, NULL, TRUE);
-    $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'existing-terms')));
-  }
-  $output .= drupal_render_children($form);
-  drupal_add_js(
-    "(function ($) {
-     Drupal.behaviors.quiz_categorized = {
-     attach: function(context) {
-      $('#browse-for-term:not(.quiz-processed)').click(function(event) {
-        event.preventDefault();
-        $('#edit-term').focus().val('*').trigger('keyup');
-      }).addClass('quiz-processed');
-      $('#edit-term').click(function(){
-        if ($(this).val() == '*') {
-          $(this).val('');
-        }
-      });
-    }};}(jQuery));"
-    , array('type' => 'inline', 'group' => JS_DEFAULT));
-  return $output;
 }
 
 /**

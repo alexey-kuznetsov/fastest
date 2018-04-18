@@ -171,14 +171,6 @@ input#edit-submit-hidden {
 #no-questions {
   font-style: italic;
 }
-#quiz-view-table {
-  width: auto;
-  border-collapse: separate;
-  border: thin solid #555555;
-  padding: 0px;
-  margin: 0px;
-  margin-bottom: 20px;
-}
 #quiz-start-quiz-button-form div {
   padding: 0px;
   margin: 0px;
@@ -300,65 +292,6 @@ input#edit-submit-hidden {
   -mox-transition: left 0.2s;
   -o-transition: left 0.2s;
   transition: left 0.2s;
-}
-
-
-.mark-doubtful .toggle div:after,
-.mark-doubtful .toggle div:before {
-  color: white;
-  text-shadow: none;
-  width: 50px;
-  position: absolute;
-  top: 0;
-  font-size: 9px;
-  font-weight: bold;
-}
-
-.mark-doubtful .toggle div:before {
-  content: "Doubtful";
-  left: -48px;
-}
-
-.mark-doubtful .toggle div:after {
-  content: "Clear";
-  right: -48px;
-}
-.mark-doubtful .toggle.off div {
-  left: 48px;
-}
-
-/*
-  Icons
-*/
-.quiz-score-icon {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-size: cover
-}
-.quiz-score-icon.correct {
-  background-image: url('images/check_008000_64.png');
-}
-.quiz-score-icon.incorrect {
-  background-image: url('images/times_ff0000_64.png');
-}
-.quiz-score-icon.unknown {
-  background-image: url('images/question_808080_64.png');
-}
-.quiz-score-icon.should {
-  background-image: url('images/check_808080_64.png');
-}
-.quiz-score-icon.should-not {
-  background-image: url('images/times_808080_64.png');
-}
-.quiz-score-icon.almost {
-  background-image: url('images/check_ffff00_64.png');
-}
-.quiz-score-icon.selected {
-  background-image: url('images/arrow-right_808080_64.png');
-}
-.quiz-score-icon.unselected {
-  background-image: url('images/circle-o_808080_64.png');
 }
 
 /*

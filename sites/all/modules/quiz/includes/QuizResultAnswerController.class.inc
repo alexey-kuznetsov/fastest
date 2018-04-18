@@ -1,12 +1,27 @@
 <?php
 
+/**
+ * Controller for a single quiz question response.
+ */
 class QuizResultAnswerController extends EntityAPIController {
 
+  /**
+   * Build the response content with feedback.
+   */
   public function buildContent($entity, $view_mode = 'full', $langcode = NULL) {
     $out = parent::buildContent($entity, $view_mode, $langcode);
     $node = node_load($entity->question_nid, $entity->question_vid);
     $entity_info = entity_get_info('node');
-    $instance = $entity->instance;
+    // @kludge
+    // We check for an instance first. This is probably not the best way to do
+    // this but we need to sometimes show feedback for an answer not stored.
+    // For example when taking quizzes with "repeat until correct".
+    if (!isset($entity->instance)) {
+      $instance = _quiz_question_response_get_instance($entity->result_id, $node);
+    }
+    else {
+      $instance = $entity->instance;
+    }
     foreach ($entity_info['view modes'] as $view_mode => $info) {
       if ($instance->canReview("quiz_question_view_" . $view_mode)) {
         $build = node_view($node, $view_mode);
@@ -59,7 +74,9 @@ class QuizResultAnswerController extends EntityAPIController {
       $class = 'q-waiting';
     }
 
-    if ($instance->canReview('score') || quiz_access_to_score()) {
+    $quiz_result = quiz_result_load($entity->result_id);
+
+    if ($instance->canReview('score') || quiz_access_to_score($quiz_result)) {
       $out['score']['#title'] = '';
       $out['score']['#markup'] = theme('quiz_question_score', array('score' => $score, 'max_score' => $instance->getMaxScore(), 'class' => $class));
     }
@@ -73,7 +90,6 @@ class QuizResultAnswerController extends EntityAPIController {
     if ($instance->canReview('question_feedback')) {
       if ($properties = entity_load('quiz_question', FALSE, array('nid' => $instance->quizQuestion->node->nid, 'vid' => $instance->quizQuestion->node->vid))) {
         $quiz_question = reset($properties);
-        $quiz_result = quiz_result_load($entity->result_id);
         $account = user_load($quiz_result->uid);
         $token_types = array(
           'global' => NULL,
@@ -93,16 +109,6 @@ class QuizResultAnswerController extends EntityAPIController {
     }
 
     return $out;
-  }
-
-  public function load($ids = array(), $conditions = array()) {
-    $entities = parent::load($ids, $conditions);
-    foreach ($entities as $entity) {
-      $node = node_load($entity->question_nid, $entity->question_vid);
-      $instance = _quiz_question_response_get_instance($entity->result_id, $node);
-      $entity->instance = $instance;
-    }
-    return $entities;
   }
 
 }
