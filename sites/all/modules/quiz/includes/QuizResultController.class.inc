@@ -97,11 +97,6 @@ class QuizResultController extends EntityAPIController {
       }
 
       if (!empty($entity->build_on_last)) {
-        $build_on_last = $entity->build_on_last;
-        // @kludge we need to reload to get the layout loaded on.
-        $entity = quiz_result_load($entity->result_id);
-        $entity->build_on_last = $build_on_last;
-
         // Build on the last attempt the user took. If this quiz has build on last
         // attempt set, we need to search for a previous attempt with the same
         // version of the current quiz.
@@ -155,7 +150,7 @@ class QuizResultController extends EntityAPIController {
       '!yourtotal' => ($account->uid == $account->uid) ? t('Your') : t('Total'),
     );
 
-    $out['questions'] = array();
+    $questions = array();
 
     foreach ($entity->getLayout() as $question) {
       // Loop through all the questions and get their feedback.
@@ -167,33 +162,47 @@ class QuizResultController extends EntityAPIController {
         $qras = entity_load('quiz_result_answer', FALSE, array('result_id' => $entity->result_id, 'question_nid' => $question_node->nid, 'question_vid' => $question_node->vid));
         $qra = reset($qras);
 
-        $out['questions'][$question_node->nid] = array(
-          '#title' => t('Question @num', array('@num' => $question['display_number'])),
-          '#type' => 'fieldset',
-          'feedback' => $qra->view(),
-          '#weight' => $question['number'],
-        );
-      }
-
-      $quiz_feedback['#markup'] = '';
-      if (quiz_feedback_can_review('quiz_feedback', $entity)) {
-        $summary = _quiz_get_summary_text($entity);
-        // Show quiz feedback.
-        if (!empty($summary['passfail'])) {
-          $quiz_feedback['#markup'] .= '<div id="quiz-summary">' . $summary['passfail'] . '</div>';
+        $feedback = $qra->view();
+        if (element_children($feedback['quiz_result_answer'][$instance->result_answer_id])) {
+          $questions[$question_node->nid] = array(
+            '#title' => t('Question @num', array('@num' => $question['display_number'])),
+            '#type' => 'fieldset',
+            'feedback' => $feedback,
+            '#weight' => $question['number'],
+          );
         }
-        if (!empty($summary['result'])) {
-          $quiz_feedback['#markup'] .= '<div id="quiz-summary">' . $summary['result'] . '</div>';
-        }
-      }
-      $out['summary'] = $quiz_feedback;
-
-      if (quiz_feedback_can_review('score', $entity)) {
-        // Show score.
-        $out['score']['#markup'] = '<div id="quiz_score_possible">' . t('!username got %num_correct of %question_count possible points.', $params) . '</div>' . "\n";
-        $out['score']['#markup'] .= '<div id="quiz_score_percent">' . t('!yourtotal score: @score%', $params) . '</div>';
       }
     }
+
+    if ($questions) {
+      $out['questions'] = $questions;
+    }
+
+    $quiz_feedback['#markup'] = '';
+    if (quiz_feedback_can_review('quiz_feedback', $entity)) {
+      $summary = _quiz_get_summary_text($entity);
+      // Show quiz feedback.
+      if (!empty($summary['passfail'])) {
+        $quiz_feedback['#markup'] .= '<div id="quiz-summary">' . $summary['passfail'] . '</div>';
+      }
+      if (!empty($summary['result'])) {
+        $quiz_feedback['#markup'] .= '<div id="quiz-summary">' . $summary['result'] . '</div>';
+      }
+    }
+    if ($quiz_feedback['#markup']) {
+      $out['summary'] = $quiz_feedback;
+    }
+
+    if (quiz_feedback_can_review('score', $entity)) {
+      // Show score.
+      $out['score']['#markup'] = '<div id="quiz_score_possible">' . t('!username got %num_correct of %question_count possible points.', $params) . '</div>' . "\n";
+      $out['score']['#markup'] .= '<div id="quiz_score_percent">' . t('!yourtotal score: @score%', $params) . '</div>';
+    }
+
+    if (!element_children($out)) {
+      $out['no_feedback_text']['#markup'] = t('You have finished this @quiz.', array('@quiz' => QUIZ_NAME));
+    }
+
     return $out;
   }
 
